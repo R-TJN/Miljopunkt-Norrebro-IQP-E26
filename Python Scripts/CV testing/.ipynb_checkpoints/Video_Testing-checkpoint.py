@@ -28,8 +28,8 @@ while(video.isOpened()):
    # Find and Display words 
     for word in result: 
         print(word)
-        frame = cv2.rectangle(frame, word[0][0], word[0][2], (255,0,0) , 2)
-        frame = cv2.putText(frame, word[1], word[0][0], cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        frame = cv2.rectangle(frame, (int(word[0][0][0]), int(word[0][0][1])), (int(word[0][2][0]), int(word[0][2][1])), (255,0,0) , 2)
+        frame = cv2.putText(frame, word[1], (int(word[0][0][0]), int(word[0][0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         
     # Display the resulting frame
     out.write(frame)
@@ -45,6 +45,7 @@ while(video.isOpened()):
  
 # When everything done, release the video capture object
 video.release()
+out.release()
  
 # Closes all the frames
 cv2.destroyAllWindows()
