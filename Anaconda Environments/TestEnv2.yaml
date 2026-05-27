@@ -1,0 +1,10 @@
+name: TestEnv
+channels:
+  - defaults
+dependencies:
+  - python=3.13
+  - notebook
+  - ffmpeg
+  - opencv
+  - ffmpeg-python
+prefix: C:\Users\rthom\anaconda3\envs\TestEnv
