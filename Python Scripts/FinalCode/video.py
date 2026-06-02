@@ -6,12 +6,14 @@ import os
 from datetime import datetime, timedelta
 from dmrlookup import dmrlookup
 
-#   python videocounting.py <video_file> <data_file> <start_time>
+#python videocounting.py <video_file> <data_file> <start_time> [--show]
 parser = argparse.ArgumentParser(
     description='Count vehicles by powertrain and overlay time-synced data onto a video.')
 parser.add_argument('video_file', help='Video file name, e.g. 1.6.26Test.mp4')
 parser.add_argument('data_file', help='TrakPro/P-Trak data file name, e.g. 6_1_2.txt')
 parser.add_argument('start_time', help='Time the video starts, HH:MM:SS, e.g. 11:46:15')
+parser.add_argument('--show', action='store_true',
+                    help='Show the video in a live window while processing; press Q to quit early')
 args = parser.parse_args()
 
 VIDEO_FILE = args.video_file
@@ -179,10 +181,13 @@ while(video.isOpened()):
         # Write the resulting frame
         out.write(frame)
         frameCount += 1
-        cv2.imshow('Frame',frame)
-        # Press Q on keyboard to  exit
-        if cv2.waitKey(10) & 0xFF == ord('q'):
-          break
+
+        # Live preview window, only when --show is passed.
+        if args.show:
+            cv2.imshow('Frame', frame)
+            # Press Q on keyboard to exit
+            if cv2.waitKey(10) & 0xFF == ord('q'):
+                break
 
     # Break the loop
     else:
