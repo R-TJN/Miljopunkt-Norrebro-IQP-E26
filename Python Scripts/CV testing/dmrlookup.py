@@ -10,8 +10,11 @@ def dmrlookup(plate):
         return None
 
     try:
+        print("Looking up vehicle info...")
         vehicle = DMR.get_by_plate(plate)
-    except (IndexError, Exception):
+        #print(vars(vehicle))
+    except (IndexError, Exception) as e:
+        print(f"DMR failed for plate {plate}: {type(e).__name__}: {e}")
         return None
 
     if vehicle is None:
