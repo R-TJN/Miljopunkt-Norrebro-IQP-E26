@@ -22,7 +22,4 @@ def dmrlookup(plate):
 
     return {
         "powertrain": vehicle.propulsion,
-        "vehicle_type": vehicle.type,
-        "weight": vehicle.total_weight,
-        "fuel_consumption": vehicle.fuel_consumption
     }
