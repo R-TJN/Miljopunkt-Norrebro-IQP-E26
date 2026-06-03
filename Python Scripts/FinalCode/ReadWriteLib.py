@@ -1,6 +1,7 @@
+import os
+import csv 
 
-
-def load_trakpro_data(path):
+def load_trakpro_data(path: str):
     data_map = {}
     units = ''
     label = 'Value'
@@ -34,3 +35,15 @@ def load_trakpro_data(path):
 
     start_dt = min(data_map.keys()) if data_map else None
     return data_map, start_dt, units, label
+
+def create_directory(directory_name: str):
+    # if the overall data directory does not exist, create it
+    if not os.path.exists("./processed_data"):
+        os.makedirs("./processed_data")
+
+    if not os.path.exists("./processed_data" + directory_name):
+        os.makedirs("./processed_data/" + directory_name)
+
+def create_csv(directory_name: str): 
+    
+    

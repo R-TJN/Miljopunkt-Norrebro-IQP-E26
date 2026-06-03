@@ -78,7 +78,6 @@ def PullTextByFrame(VIDEO_IN):
         video.release()
         return returnFrames
 
-
             #Output filename derived from the input video
     #out = cv2.VideoWriter(VIDEO_OUT, cv2.VideoWriter_fourcc(*'avc1'), 30, (frame_width, frame_height))
 
