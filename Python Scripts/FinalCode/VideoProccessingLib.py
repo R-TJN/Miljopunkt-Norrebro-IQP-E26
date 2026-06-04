@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 import os
 import re
+import constants 
 from datetime import datetime, timedelta
 from dmrlookup import dmrlookup
 
@@ -20,7 +21,7 @@ def detect_clock_time(ocr_result):
                 continue
     return None
     
-def PullTextByFrame(VIDEO_IN): 
+def pull_text_by_frame(VIDEO_IN): 
     #Initialize list of return Frames. Each element in return list will be a list of words 
     returnFrames = []
     
@@ -36,7 +37,7 @@ def PullTextByFrame(VIDEO_IN):
     frames = video.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = video.get(cv2.CAP_PROP_FPS)
     if not fps or fps <= 0:
-        fps = 30.0
+        fps = constants.DEFAULT_FPS
         
     print("Opening file of " + str(frames) + " Frames. Video is " + str(fps) + " fps")
     print("Processing... press Ctrl+C in the terminal to stop early and save output")
@@ -52,7 +53,10 @@ def PullTextByFrame(VIDEO_IN):
                 # List of all of the words in the frame, in the format Of: 
                 # (Word, TopLeft, BottomRight) -> (String, (int, int), (int, int)) 
                 words = []
-                result = reader.readtext(frame, detail=1, text_threshold=.9, blocklist=".,{}[]()|' ")
+                result = reader.readtext(frame, 
+                                         detail=constants.DETAIL_SETTING, 
+                                         text_threshold=.constants.CONFIDENCE, 
+                                         blocklist= constants.BLOCK_LIST)
                 print("Frame : " + str(frameCount) + "/" + str(frames) + " result: ")
 
                 #Find each piece of detected text

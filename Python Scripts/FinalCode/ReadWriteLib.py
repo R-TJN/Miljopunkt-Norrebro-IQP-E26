@@ -1,7 +1,8 @@
 import os
-import csv 
+import csv
+import constants 
 
-def load_trakpro_data(path: str):
+def load_trakpro_data(readPath: str, writePath):
     data_map = {}
     units = ''
     label = 'Value'
@@ -37,13 +38,28 @@ def load_trakpro_data(path: str):
     return data_map, start_dt, units, label
 
 def create_directory(directory_name: str):
-    # if the overall data directory does not exist, create it
-    if not os.path.exists("./processed_data"):
-        os.makedirs("./processed_data")
 
-    if not os.path.exists("./processed_data" + directory_name):
-        os.makedirs("./processed_data/" + directory_name)
+    #File Paths Naming
+    directoryPath = constants.MAIN_DIRECTORY_NAME + directory_name
+    metadataPath = directoryPath + constants.METADATA_FILE_NAME
+    airQualityPath = directoryPath + constants.PARTICLE_COUNT_FILE_NAME
+    vehicleTrackingPath = directoryPath + constants.VEHICLE_TRACKING_FILE_NAME
+    cohesivePath = directoryPath + constants.COHESIVE_FILE_NAME 
 
-def create_csv(directory_name: str): 
+    filePaths = [metadataPath, airQualityPath, vehicleTrackingPath, cohesivePath]
+
+    # If the overall data directory or specified directory do not exist, create them
+    if not os.path.exists(constants.MAIN_DIRECTORY_NAME):
+        os.makedirs(constants.MAIN_DIRECTORY_NAME)
+
+    if not os.path.exists(directoryPath):
+        os.makedirs(directoryPath)
+
+    # If any of the files dont exist then create them 
+    for filePath in filePaths:
+        if not os.path.exists(filePath):
+            file = open(filePath, "x")
+            
+    return filePaths
     
     
