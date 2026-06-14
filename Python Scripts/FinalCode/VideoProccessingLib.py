@@ -24,7 +24,7 @@ def pull_text_by_frame(VIDEO_IN):
     #Initialize list of return Frames. Each element in return list will be a list of words 
     returnFrames = {}
     
-    video = cv2.VideoCapture(VIDEO_FILE)
+    video = cv2.VideoCapture(VIDEO_IN)
     # Check if camera opened successfully
     if (video.isOpened() == False):
         print("Error opening video stream or file")

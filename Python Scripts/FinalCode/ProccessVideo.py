@@ -57,7 +57,7 @@ media = ffmpeg.probe(input_video_path, cmd = 'ffprobe')
 meta_data["video"] = media
 
 # 4. Proccess Video for words in frames
-words_in_frames = pull_text_by_frame(input_video_path)
+words_in_frames = VideoProccessingLib.pull_text_by_frame(input_video_path)
 
 # 5. Proccess words in each frame for plates, find vehicle info 
 print("Starting Video Proccesing of " + str(input_video_path))
