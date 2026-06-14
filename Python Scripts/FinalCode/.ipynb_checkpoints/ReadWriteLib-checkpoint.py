@@ -2,58 +2,54 @@ import os
 import csv
 import constants 
 
-def load_trakpro_data(readPath: str, writePath):
-    data_map = {}
-    units = ''
-    label = 'Value'
+def load_trakpro_data(path: str):
+    particle_data = []
+    meta_data = {}
     with open(path, 'r') as f:
+        count = 0
         for line in f:
-            fields = [c.strip() for c in line.strip().split(',')]
-            if len(fields) < 3:
-                continue
+            count += 1
+            if count in [6,8,9,10,12,13]:
+                x = line.split(":,")
+                print(x[0])
+                print(x[1])
+                meta_data[x[0]] = x[1]
 
-            #Column header row: Date,Time,Pt Conc
-            if fields[0] == 'Date' and fields[1] == 'Time':
-                label = fields[2]
-                continue
+            elif count in [18, 19, 20, 22, 23]:
+                x = line.split(":,")
+                meta_data[x[0][1:]] = x[1]
 
-            # Units row: MM/dd/yyyy,hh:mm:ss,pt/cc
-            if fields[0] == 'MM/dd/yyyy' and fields[1] == 'hh:mm:ss':
-                units = fields[2]
-                continue
-
-            # Data row
-            try:
-                dt = datetime.strptime(fields[0] + ' ' + fields[1], '%m/%d/%Y %H:%M:%S')
-            except ValueError:
-                continue
-
-            try:
-                value = int(fields[2])
-            except ValueError:
-                value = None
-            data_map[dt] = value
-
-    start_dt = min(data_map.keys()) if data_map else None
-    return data_map, start_dt, units, label
+            elif count > 30 : 
+                x = line.split(",")
+                particle_data.append({constants.FIELDNAMES[0] : x[0],
+                                      constants.FIELDNAMES[1] : x[1],
+                                      constants.FIELDNAMES[2] : x[2]})
+                
+    return particle_data, meta_data
 
 def create_directory(directory_name: str):
-    # if the overall data directory does not exist, create it
-    directoryPath = constants.MAIN_DIRECTORY_NAME + directory_name
-    metadataPath = directoryPath + constants.METADATA_FILE_NAME
-    airQualityPath = directoryPath + constants.PARTICLE_COUNT_FILE_NAME
-    vehicleTrackingPath = directoryPath + constants.VEHICLE_TRACKING_FILE_NAME
-    cohesivePath = directoryPath + constants.COHESIVE_FILE_NAME 
 
-    filePaths = [metadataPath, airQualityPath, vehicleTrackingPath, cohesivePath]
+    #File Paths Naming
+    directory_path = constants.MAIN_DIRECTORY_NAME + directory_name
+    meta_data_path = directory_path + constants.METADATA_FILE_NAME
+    air_quality_path = directory_path + constants.PARTICLE_COUNT_FILE_NAME
+    vehicle_tracking_path = directory_path + constants.VEHICLE_TRACKING_FILE_NAME
+    cohesive_path = directory_path + constants.COHESIVE_FILE_NAME 
+
+    file_paths = [meta_data_path, air_quality_path, vehicle_tracking_path, cohesive_path]
+
+    # If the overall data directory or specified directory do not exist, create them
     if not os.path.exists(constants.MAIN_DIRECTORY_NAME):
         os.makedirs(constants.MAIN_DIRECTORY_NAME)
 
-    if not os.path.exists(directoryPath):
-        os.makedirs(directoryPath)
-    for filePath in filePaths:
-        if not os.path.exists(filePath):
-            file = open(filePath, "x")
-    return filePaths
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+
+    # If any of the files dont exist then create them 
+    for file_path in file_paths:
+        if not os.path.exists(file_path):
+            file = open(file_path, "x")
+            
+    return file_paths
     
     

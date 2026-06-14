@@ -6,7 +6,6 @@ import os
 import re
 import constants 
 from datetime import datetime, timedelta
-from dmrlookup import dmrlookup
 
 #Matches an on-screen clock reading (HH:MM:SS).
 CLOCK_RE = re.compile(r'(\d{1,2}:\d{2}:\d{2})')
@@ -23,7 +22,7 @@ def detect_clock_time(ocr_result):
     
 def pull_text_by_frame(VIDEO_IN): 
     #Initialize list of return Frames. Each element in return list will be a list of words 
-    returnFrames = []
+    returnFrames = {}
     
     video = cv2.VideoCapture(VIDEO_FILE)
     # Check if camera opened successfully
@@ -55,7 +54,7 @@ def pull_text_by_frame(VIDEO_IN):
                 words = []
                 result = reader.readtext(frame, 
                                          detail=constants.DETAIL_SETTING, 
-                                         text_threshold=.constants.CONFIDENCE, 
+                                         text_threshold=constants.CONFIDENCE, 
                                          blocklist= constants.BLOCK_LIST)
                 print("Frame : " + str(frameCount) + "/" + str(frames) + " result: ")
 
@@ -67,7 +66,8 @@ def pull_text_by_frame(VIDEO_IN):
                     top_left = (int(word[0][0][0]), int(word[0][0][1]))
                     bottom_right = (int(word[0][2][0]), int(word[0][2][1]))
                     words.append( (plate_text, top_left, bottom_right))
-                returnFrames.append(words) 
+                    
+                returnFrames[frameCount] = words 
                 frameCount += 1
     
             #Break the loop
@@ -85,11 +85,11 @@ def pull_text_by_frame(VIDEO_IN):
             #Output filename derived from the input video
     #out = cv2.VideoWriter(VIDEO_OUT, cv2.VideoWriter_fourcc(*'avc1'), 30, (frame_width, frame_height))
 
-        """
+    """
         #Warn if auto-detection was requested but no clock was ever found
         if VIDEO_START_TIME is None and video_start_dt is None:
             print("\nWarning: no on-screen clock was detected, so no data overlay was drawn. You can pass the start time manually as the third argument (HH:MM:SS).")\
-        """
+    
 
     #Load the data we want to overlay, and figure out the timeline
 # data_map, data_start_time, data_units, data_label = load_trakpro_data(DATA_FILE)
@@ -99,16 +99,16 @@ def pull_text_by_frame(VIDEO_IN):
 
 #If a start time was given on the command line, use it directly. Otherwise leave video_start_dt as None and detect it from the on-screen clock below
 
-                    """
+                
                 #Live preview window, only when --show
                 if args.show:
                     cv2.imshow('Frame', frame)
                     #Press Q on keyboard to exit
                     if cv2.waitKey(10) & 0xFF == ord('q'):
                         break
-                """
+                
 
-"""
+
 if VIDEO_START_TIME is not None:
     start_time_only = datetime.strptime(VIDEO_START_TIME, '%H:%M:%S').time()
     video_start_dt = datetime.combine(base_date, start_time_only)
@@ -116,18 +116,18 @@ if VIDEO_START_TIME is not None:
 else:
     video_start_dt = None
     print("No start time given -- will auto-detect an on-screen clock (HH:MM:SS).")
-""" 
+
 
 
     #Running totals
-    """
+    
     gas_count = 0
     ev_count = 0
     diesel_count = 0
     seen_plates = set()  #track already counted plates
     plate_cache = {}  #maps plate text to lookup result
-    """
-                """
+    
+                
                 #Auto-detect the on-screen clock to set the start time
                 if video_start_dt is None:
                     detected = detect_clock_time(result)
@@ -145,10 +145,10 @@ else:
                         except (IndexError, Exception):
                             lookup = None
                         plate_cache[plate_text] = lookup
-                    """
+                   
                     # Block out the detected text
                     # frame = cv2.rectangle(frame, top_left, bottom_right, (0, 255, 0), -1)
-                    """
+                    
                     if lookup != None:
                         print(lookup)
                     
@@ -167,8 +167,8 @@ else:
                     label = lookup['powertrain'] if lookup['powertrain'] else 'Unknown'
                     frame = cv2.putText(frame, label, (top_left[0], bottom_right[1] + 25),
                                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                    """
-                """
+                    
+                
                 #Draw counter overlay in top left
                 cv2.putText(frame, f'Gas: {gas_count}', (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 cv2.putText(frame, f'Diesel: {diesel_count}', (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
@@ -200,8 +200,8 @@ else:
                 (time_w, _), _ = cv2.getTextSize(time_text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
                 cv2.putText(frame, time_text, (frame_width - time_w - 20, frame_height - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                """
-"""
+                
+
     #Print final summary to console
     print("\nFinal Count)
     print(f"Gas: {gas_count}")
@@ -210,6 +210,6 @@ else:
     print(f"Total unique vehicles: {len(seen_plates)}")
     print(f"Frames processed: {frameCount - 1}")
     print(f"Saved output to: {output_file}")
-"""
-    #Always release so the output file is written out correctly
 
+    #Always release so the output file is written out correctly
+    """
