@@ -56,6 +56,9 @@ video_meta_data = {}
 media = ffmpeg.probe(input_video_path, cmd = 'ffprobe')
 meta_data["video"] = media
 
+with open(meta_data_path, "w") as f:
+  f.write(json.dumps(meta_data, indent=4))
+  
 # 4. Proccess Video for words in frames
 words_in_frames = VideoProccessingLib.pull_text_by_frame(input_video_path)
 
@@ -63,9 +66,9 @@ words_in_frames = VideoProccessingLib.pull_text_by_frame(input_video_path)
 print("Starting Video Proccesing of " + str(input_video_path))
 
 video_start_time = media['streams'][0]['tags']['creation_time']
-video_time = datetime.fromisoformat(creation_time[0:10] + " " + creation_time[11:19])
+video_time = datetime.fromisoformat(video_start_time[0:10] + " " + video_start_time[11:19])
 delta = timedelta(seconds = 2) 
-print("Video starts at" + video_time)
+print("Video starts at" + str(video_time))
 
 for frame in words_in_frames:
     plates = []
