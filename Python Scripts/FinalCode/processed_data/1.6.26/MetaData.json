@@ -1,17 +1,5 @@
 {
-    "airQuality": {
-        "Test ID": "081\n",
-        "Start Date": "06/01/2026\n",
-        "Start Time": "13:46:15\n",
-        "Duration (dd:hh:mm:ss)": "0:00:06:51\n",
-        "Log Interval (mm:ss)": "00:01\n",
-        "Number of points": "414\n",
-        "Average": "8993\n",
-        "Minimum": "7760\n",
-        "Time of Minimum": "13:50:34\n",
-        "Maximum": "15500\n",
-        "Time of Maximum": "13:48:54\n"
-    },
+    "airQuality": "",
     "video": {
         "streams": [
             {
@@ -70,7 +58,7 @@
                     "multilayer": 0
                 },
                 "tags": {
-                    "creation_time": "2026-06-15T09:43:23.000000Z",
+                    "creation_time": "2026-06-01T13:46:17",
                     "language": "und",
                     "handler_name": "Core Media Video",
                     "vendor_id": "[0][0][0][0]",
@@ -132,7 +120,7 @@
             }
         ],
         "format": {
-            "filename": "/Users/justinklessel/Documents/GitHub/Miljopunkt-Norrebro-IQP-E26/Python Scripts/FinalCode/Videos/1.6.26TestCrop.mp4",
+            "filename": "Videos/1.6.26TestCrop13.46.17.mp4",
             "nb_streams": 2,
             "nb_programs": 0,
             "nb_stream_groups": 0,
@@ -140,8 +128,8 @@
             "format_long_name": "QuickTime / MOV",
             "start_time": "0.000000",
             "duration": "402.518333",
-            "size": "451447023",
-            "bit_rate": "8972451",
+            "size": "451449837",
+            "bit_rate": "8972507",
             "probe_score": 100,
             "tags": {
                 "major_brand": "qt  ",
