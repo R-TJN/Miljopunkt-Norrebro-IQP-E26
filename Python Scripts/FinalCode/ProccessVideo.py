@@ -67,7 +67,7 @@ else:
     print("Start time given manually")
     media['streams'][0]['tags']['creation_time'] = video_start_time
     video_time = datetime.fromisoformat(video_start_time)
-delta = timedelta(seconds = 2) 
+delta = timedelta(seconds = 1/30) 
 
 print("Video starts at" + str(video_time))
 
