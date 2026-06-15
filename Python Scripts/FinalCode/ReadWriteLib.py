@@ -21,9 +21,9 @@ def load_trakpro_data(path: str):
 
             elif count > 30 : 
                 x = line.split(",")
-                particle_data.append({constants.FIELDNAMES[0] : x[0],
-                                      constants.FIELDNAMES[1] : x[1],
-                                      constants.FIELDNAMES[2] : x[2]})
+                particle_data.append({constants.AIR_QUALITY_FIELDNAMES[0] : x[0],
+                                      constants.AIR_QUALITY_FIELDNAMES[1] : x[1],
+                                      constants.AIR_QUALITY_FIELDNAMES[2] : x[2]})
                 
     return particle_data, meta_data
 
