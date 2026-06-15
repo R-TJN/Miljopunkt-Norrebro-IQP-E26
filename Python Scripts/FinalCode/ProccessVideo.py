@@ -81,7 +81,7 @@ for frame in words_in_frames:
             vehicle_info = dmrlookup(word[0])
             if vehicle_info is not None:
                 vehicleData[hashed_word] = vehicle_info
-                print(vehicleData)
+                print(vehicle_info)
                 #censor_plate(word)
                 plates.append(hashed_word)
     vehiclesInFrames.append ({constants.VEHICLE_TRACKING_FEILDNAMES[0] : video_time.date(),

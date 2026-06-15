@@ -56,32 +56,35 @@ video_meta_data = {}
 media = ffmpeg.probe(input_video_path, cmd = 'ffprobe')
 meta_data["video"] = media
 
+with open(meta_data_path, "w") as f:
+  f.write(json.dumps(meta_data, indent=4))
+  
 # 4. Proccess Video for words in frames
-words_in_frames = pull_text_by_frame(input_video_path)
+words_in_frames = VideoProccessingLib.pull_text_by_frame(input_video_path)
 
 # 5. Proccess words in each frame for plates, find vehicle info 
 print("Starting Video Proccesing of " + str(input_video_path))
 
 video_start_time = media['streams'][0]['tags']['creation_time']
-video_time = datetime.fromisoformat(creation_time[0:10] + " " + creation_time[11:19])
+video_time = datetime.fromisoformat(video_start_time[0:10] + " " + video_start_time[11:19])
 delta = timedelta(seconds = 2) 
-print("Video starts at" + video_time)
+print("Video starts at" + str(video_time))
 
 for frame in words_in_frames:
     plates = []
     for word in words_in_frames[frame]:
-        hashed_word = hashlib.sha256(word[0]).hexdigest()
-        if hashed_word in vehicle_data:
+        hashed_word = word[0] #hashlib.sha256(word[0].encode("utf-8")).hexdigest()
+        if hashed_word in vehicleData:
             #censorPlate(word) #TODO Implement 
             plates.append(hashed_word)
         else:
             vehicle_info = dmrlookup(word[0])
             if vehicle_info is not None:
-                vehicle_data[hashed_word] = vehicle_info
-                print(vehicle_data)
+                vehicleData[hashed_word] = vehicle_info
+                print(vehicle_info)
                 #censor_plate(word)
                 plates.append(hashed_word)
-    vehicles_in_frames.append ({constants.VEHICLE_TRACKING_FEILDNAMES[0] : video_time.date(),
+    vehiclesInFrames.append ({constants.VEHICLE_TRACKING_FEILDNAMES[0] : video_time.date(),
                                 constants.VEHICLE_TRACKING_FEILDNAMES[1] : video_time.time(),
                                 constants.VEHICLE_TRACKING_FEILDNAMES[2] : plates})
     video_time = video_time + delta 
@@ -97,7 +100,7 @@ with open(meta_data_path, "w") as f:
   f.write(json.dumps(meta_data, indent=4))
 
 with open(vehicle_data_path, "w") as f:
-  f.write(json.dumps(vehicle_data, indent=4))
+  f.write(json.dumps(vehicleData, indent=4))
     
 with open(particle_data_path, 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=constants.AIR_QUALITY_FIELDNAMES)
@@ -107,7 +110,7 @@ with open(particle_data_path, 'w', newline='') as csvfile:
 with open(vehicle_tracking_path, 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=constants.VEHICLE_TRACKING_FEILDNAMES)
     writer.writeheader()
-    writer.writerows(vehicles_in_frames)
+    writer.writerows(vehiclesInFrames)
     
 # 8. Overlay data onto video 
 
