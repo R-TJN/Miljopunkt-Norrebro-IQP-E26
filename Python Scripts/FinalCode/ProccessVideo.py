@@ -73,15 +73,15 @@ print("Video starts at" + str(video_time))
 for frame in words_in_frames:
     plates = []
     for word in words_in_frames[frame]:
-        hashed_word = hashlib.sha256(word[0].encode("utf-8")).hexdigest()
+        hashed_word = word[0] #hashlib.sha256(word[0].encode("utf-8")).hexdigest()
         if hashed_word in vehicleData:
             #censorPlate(word) #TODO Implement 
             plates.append(hashed_word)
         else:
             vehicle_info = dmrlookup(word[0])
             if vehicle_info is not None:
-                vehicle_data[hashed_word] = vehicle_info
-                print(vehicle_data)
+                vehicleData[hashed_word] = vehicle_info
+                print(vehicleData)
                 #censor_plate(word)
                 plates.append(hashed_word)
     vehiclesInFrames.append ({constants.VEHICLE_TRACKING_FEILDNAMES[0] : video_time.date(),
