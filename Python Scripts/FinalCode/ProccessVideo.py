@@ -32,7 +32,7 @@ vehicleData = {}
 vehiclesInFrames = []
 meta_data = { "airQuality" : "", "video" : ""}
 
-# 1. Process Args
+# 0. Process Args
 #python ProccessVideo.py <video_file> <data_file> <directory_name> [start_time] [--show]
 parser = argparse.ArgumentParser(
 description='Count vehicles by powertrain and overlay time-synced data onto a video.')
@@ -48,28 +48,47 @@ track_pro_path = args.data_file
 video_start_time = args.start_time
 directory_name = str(args.directory_name).strip()
 
-# 2. Create file structure 
+# 1. Create file structure 
+print("Step 1: Finding MetaData")
 meta_data_path, particle_data_path, vehicle_tracking_path, vehicle_data_path = ReadWriteLib.create_directory(directory_name)
 
-# 3. Pull metadata (start-time, frameCount, framerate, resolution)  
+# 2. Pull metadata (start-time, frameCount, framerate, resolution)  
+print("Step 2: Finding MetaData")
 video_meta_data = {}
 media = ffmpeg.probe(input_video_path, cmd = 'ffprobe')
 meta_data["video"] = media
 
+print("Finding Start time of " + str(input_video_path))
+if video_start_time is None:
+    print("Finding time using EXIF Meta-Data")
+    video_start_time = media['streams'][0]['tags']['creation_time']
+    video_time = datetime.fromisoformat(video_start_time[0:10] + " " + video_start_time[11:19])
+else:
+    print("Start time given manually")
+    video_time = datetime.fromisoformat(video_start_time)
+delta = timedelta(seconds = 2) 
+
+print("Video starts at" + str(video_time))
+
 with open(meta_data_path, "w") as f:
-  f.write(json.dumps(meta_data, indent=4))
-  
+    f.write(json.dumps(meta_data, indent=4))
+    print("Meta-Data Written to Json")
+
+# 3. Proccess P-trak data (if asked to)
+p_track_data, p_track_meta_data = ReadWriteLib.load_trakpro_data(track_pro_path)
+meta_data["airQuality"] = p_track_meta_data
+
+with open(particle_data_path, 'w', newline='') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=constants.AIR_QUALITY_FIELDNAMES)
+    writer.writeheader()
+    writer.writerows(p_track_data)
+    print("p-trak particle counts written to csv")
+
+
 # 4. Proccess Video for words in frames
 words_in_frames = VideoProccessingLib.pull_text_by_frame(input_video_path)
 
 # 5. Proccess words in each frame for plates, find vehicle info 
-print("Starting Video Proccesing of " + str(input_video_path))
-
-video_start_time = media['streams'][0]['tags']['creation_time']
-video_time = datetime.fromisoformat(video_start_time[0:10] + " " + video_start_time[11:19])
-delta = timedelta(seconds = 2) 
-print("Video starts at" + str(video_time))
-
 for frame in words_in_frames:
     plates = []
     for word in words_in_frames[frame]:
@@ -89,24 +108,12 @@ for frame in words_in_frames:
                                 constants.VEHICLE_TRACKING_FEILDNAMES[2] : plates})
     video_time = video_time + delta 
                
-            
-# 6. Proccess P-trak data (if asked to)
-p_track_data, p_track_meta_data = ReadWriteLib.load_trakpro_data(track_pro_path)
-meta_data["airQuality"] = p_track_meta_data
 
-# 7. Compile data into correct formats and locations, hash plate numbers 
-# ReadWriteLib.write_air_quality_data(particleCountCSVPath, pTrackData)
-with open(meta_data_path, "w") as f:
-  f.write(json.dumps(meta_data, indent=4))
+# 6. Compile data into correct formats and locations, hash plate numbers 
 
 with open(vehicle_data_path, "w") as f:
   f.write(json.dumps(vehicleData, indent=4))
     
-with open(particle_data_path, 'w', newline='') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=constants.AIR_QUALITY_FIELDNAMES)
-    writer.writeheader()
-    writer.writerows(p_track_data)
-
 with open(vehicle_tracking_path, 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=constants.VEHICLE_TRACKING_FEILDNAMES)
     writer.writeheader()
