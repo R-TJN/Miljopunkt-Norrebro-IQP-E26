@@ -109,7 +109,7 @@ for frame in words_in_frames:
                                 constants.VEHICLE_TRACKING_FEILDNAMES[2] : plates})
     video_time = video_time + delta 
                
-
+print("Found " + str(len(vehicle_data)) + " Vehicles in video")
 # 6. Compile data into correct formats and locations, hash plate numbers
 with open(vehicle_data_path, "w") as f:
   f.write(json.dumps(vehicleData, indent=4))
