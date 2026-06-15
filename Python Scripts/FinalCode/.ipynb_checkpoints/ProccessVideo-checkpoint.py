@@ -39,7 +39,7 @@ description='Count vehicles by powertrain and overlay time-synced data onto a vi
 parser.add_argument('video_file', help='Video file name')
 parser.add_argument('data_file', help='TrakPro data file name')
 parser.add_argument('directory_name', help='name of directory files will be saved to')
-parser.add_argument('start_time', nargs='?', default=None, help='Optional. Time the video starts, HH:MM:SS. If omitted, the start time is auto-detected by reading an on-screen clock (e.g. a phone held in front of the sensor).')
+parser.add_argument('start_time', nargs='?', default=None, help='Optional. Time the video starts,YYYY-MM-DDTHH:mm:ss. If omitted, the start time is auto-detected by reading an on-screen clock (e.g. a phone held in front of the sensor).')
 parser.add_argument('--show', action='store_true', help='Show the video in a live window while processing; press Q to quit early')
 args = parser.parse_args()
 
@@ -62,9 +62,10 @@ print("Finding Start time of " + str(input_video_path))
 if video_start_time is None:
     print("Finding time using EXIF Meta-Data")
     video_start_time = media['streams'][0]['tags']['creation_time']
-    video_time = datetime.fromisoformat(video_start_time[0:10] + " " + video_start_time[11:19])
+    video_time = datetime.fromisoformat(video_start_time[0:19])
 else:
     print("Start time given manually")
+    media['streams'][0]['tags']['creation_time'] = video_start_time
     video_time = datetime.fromisoformat(video_start_time)
 delta = timedelta(seconds = 2) 
 
@@ -109,8 +110,7 @@ for frame in words_in_frames:
     video_time = video_time + delta 
                
 
-# 6. Compile data into correct formats and locations, hash plate numbers 
-
+# 6. Compile data into correct formats and locations, hash plate numbers
 with open(vehicle_data_path, "w") as f:
   f.write(json.dumps(vehicleData, indent=4))
     
@@ -119,5 +119,4 @@ with open(vehicle_tracking_path, 'w', newline='') as csvfile:
     writer.writeheader()
     writer.writerows(vehiclesInFrames)
     
-# 8. Overlay data onto video 
 
