@@ -23,7 +23,7 @@ def dmrlookup(plate):
     return {
         # Identity & registration
         "make": vehicle.make,
-        "model": vehicle.model,
+        #"model": vehicle.model,
         #"variant": vehicle.variant,
         #"vin": vehicle.vin,
         #"registration_number": vehicle.registration_number,
@@ -39,7 +39,7 @@ def dmrlookup(plate):
         #"color": vehicle.color,
         "model_year": vehicle.model_year,
         "body_type": vehicle.body_type,
-        "doors": vehicle.doors,
+        #"doors": vehicle.doors,
         "total_weight": vehicle.total_weight,
         #"vehicle_weight": vehicle.vehicle_weight,
         #"tow_bar": vehicle.tow_bar,
